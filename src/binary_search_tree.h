@@ -212,21 +212,23 @@ public:
 
     void remove(BinarySearchTreeNode<T>* node){
         if(node == nullptr) return;
-
+        
         auto parent = node->getParent();
         auto lchild = node->getChild(LEFT_CHILD);
         auto rchild = node->getChild(RIGHT_CHILD);
-        //bool isParentLeftChild =
 
-        if((lchild == nullptr) && (rchild == nullptr)){
-            if(parent != nullptr) {
-                if(parent->getChild(LEFT_CHILD) == node) parent->overwriteChild(nullptr, LEFT_CHILD);
-                if(parent->getChild(RIGHT_CHILD) == node) parent->overwriteChild(nullptr, RIGHT_CHILD);
+        if(lchild == nullptr) this->transplant(node, rchild); 
+        else if(rchild == nullptr) this->transplant(node, lchild);
+        else {
+            auto y = rchild->template searchChildIncludingSelf<BST_SEARCH_MIN>();
+            if(y->getParent() != node){
+                this->transplant(y, y->getChild(RIGHT_CHILD));
+                rchild->overwriteParent(y);
+                y->overwriteChild(rchild, RIGHT_CHILD);
             }
-            delete node;
-        }else if((lchild != nullptr) && (rchild != nullptr)){
-            auto replacement = node->successor();
-
+            this->transplant(node, y);
+            lchild->overwriteParent(y);
+            y->overwriteChild(lchild, LEFT_CHILD);
         }
     }
 
@@ -235,6 +237,11 @@ public:
 
 template<class T>
 using bst_traversal_funcion = std::function<void(BinaryTreeNode<T>*)>;
+
+template<class T>
+void test_traversal_print(){
+    
+}
 
 static int bst_test = push_test("Binary Search Tree", (test_function)[](){
     BinarySearchTree<int>* bst = new BinarySearchTree<int>(50);
