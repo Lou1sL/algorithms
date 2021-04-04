@@ -1,4 +1,3 @@
-# introduction_to_algorithms
 
 RUN:
 
