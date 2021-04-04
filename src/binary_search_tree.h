@@ -201,8 +201,7 @@ public:
 template<class T>
 using bst_traversal_funcion = std::function<void(BinaryTreeNode<T>*)>;
 
-void test_bst(){
-
+static int bst_test = push_test("Binary Search Tree", (test_function)[](){
     BinarySearchTree<int>* bst = new BinarySearchTree<int>(50);
     bst->insert(48);
     bst->insert(52);
@@ -225,5 +224,6 @@ void test_bst(){
     std::cout << ((bst->search(54) != nullptr) ? "EXIST ":"NOT EXIST ") << std::endl;
     
     delete bst;
-}
 
+    return 0;
+});

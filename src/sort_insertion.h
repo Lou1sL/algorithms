@@ -1,10 +1,10 @@
 
-template<int Alength>
-void insertion_sort(std::array<int, Alength>& A){
+template<class T, int Alength>
+void insertion_sort(std::array<T, Alength>& A){
     for(std::size_t j = 1; j < Alength; j++){
         // { 5, 4, 3, 2, 1, 0 }
         //      ↑ key = 4, as a temp
-        int key = A[j];
+        T key = A[j];
         // { 5, 4, 3, 2, 1, 0 }
         //   ↑ Index i = 0
         int i = j - 1; //Use int because std::size_t can't be negative!
@@ -21,9 +21,19 @@ void insertion_sort(std::array<int, Alength>& A){
     }
 }
 
-void test_insertion_sort(){
-    std::array<int, 6> test = std::array<int, 6> { 5, 4, 3, 2, 1, 0 };
-    insertion_sort<6>(test);
-    for(int ele:test) std::cout << ele << " ";
+static int si_test = push_test("Insertion Sort", (test_function)[](){ 
+    
+    
+    auto test_in = std::array<int, 6> { 5, 4, 3, 2, 1, 0 };
+    auto expected_out = std::array<int, 6> { 0, 1, 2, 3, 4, 5 };
+
+    insertion_sort<int, 6>(test_in);
+    bool failed = false;
+    for(int i=0; i<6; i++) {
+        std::cout << test_in[i] << " ";
+        if(test_in[i] != expected_out[i]) failed = true;
+    }
     std::cout << std::endl;
-}
+
+    return failed;
+});
