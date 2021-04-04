@@ -36,30 +36,18 @@ public:
     BinaryTreeNode() {}
     BinaryTreeNode(T val) { this->setValue(val); }
 
-    BinaryTreeNode* getChild(BTREE_CHILD_IDENTIFIER i) const {
-        return dynamic_cast<BinaryTreeNode*>(this->getLink(i));
+    BinaryTreeNode<T>* getChild(BTREE_CHILD_IDENTIFIER i) const {
+        return dynamic_cast<BinaryTreeNode<T>*>(this->getLink(i));
     }
-    BinaryTreeNode* getParent() const {
-        return dynamic_cast<BinaryTreeNode*>(this->getLink(PARENT));
+    BinaryTreeNode<T>* getParent() const {
+        return dynamic_cast<BinaryTreeNode<T>*>(this->getLink(PARENT));
     }
 
-    void overwriteChild(BinaryTreeNode* node, BTREE_CHILD_IDENTIFIER i) {
+    void overwriteChild(BinaryTreeNode<T>* node, BTREE_CHILD_IDENTIFIER i) {
         this->setLink(node, i);
     }
-    void overwriteParent(BinaryTreeNode* node) {
+    void overwriteParent(BinaryTreeNode<T>* node) {
         this->setLink(node, PARENT);
-    }
-
-    BinaryTreeNode* swapChildTree(BinaryTreeNode* node, BTREE_CHILD_IDENTIFIER i) {
-        BinaryTreeNode* danglingNode = dynamic_cast<BinaryTreeNode*>(this->getLink(i));
-        danglingNode->setLink(nullptr, PARENT);
-        node->setLink(this, PARENT);
-        this->setLink(node, i);
-        return danglingNode;
-    }
-    void setChildTree(BinaryTreeNode* node, BTREE_CHILD_IDENTIFIER i) {
-        BinaryTreeNode* danglingNode = swapChildTree(node, i);
-        if(danglingNode != nullptr) delete danglingNode;
     }
     
     template<BTREE_TRAVERSAL_ORDER_TYPE ORDER = INORDER>
@@ -71,6 +59,21 @@ public:
         auto rchild = this->getChild(RIGHT_CHILD);
         if(rchild != nullptr) rchild->template traversal<ORDER>(func);
         if constexpr(ORDER == POSTORDER) func(this);
+    }
+
+    BTREE_CHILD_IDENTIFIER whichChildOfParent() {
+        auto parent = this->getParent();
+        if(parent == nullptr) throw "Doesn't have a parent!\n";
+        if(parent->getChild(LEFT_CHILD) == this) return LEFT_CHILD;
+        else if(parent->getChild(RIGHT_CHILD) == this) return RIGHT_CHILD;
+        else throw "Child-parent relationship currupt!\n";
+    }
+
+    void overwriteSelfInParent(BinaryTreeNode<T>* node){
+        auto parent = this->getParent();
+        if(parent == nullptr) return;
+        if(parent->getChild(LEFT_CHILD) == this) parent->overwriteChild(node, LEFT_CHILD);
+        else parent->overwriteChild(node, RIGHT_CHILD);
     }
     
     virtual ~BinaryTreeNode() {
@@ -88,7 +91,7 @@ public:
     BinarySearchTreeNode() {}
     BinarySearchTreeNode(T val) { this->setValue(val); }
 
-    BinarySearchTreeNode<T>* search(T val) const {
+    BinarySearchTreeNode<T>* searchChildIncludingSelf(T val) const {
         BinaryTreeNode<T>* node = const_cast<BinarySearchTreeNode<T>*>(this);
         while((node != nullptr) && (node->getValue() != val)){
             if(val < node->getValue()) node = node->getChild(LEFT_CHILD);
@@ -98,7 +101,7 @@ public:
     }
 
     template<BSTREE_SEARCH_MIN_MAX MINMAX>
-    BinarySearchTreeNode<T>* search() const {
+    BinarySearchTreeNode<T>* searchChildIncludingSelf() const {
         BinaryTreeNode<T>* node = const_cast<BinarySearchTreeNode<T>*>(this);
         while(node != nullptr){
             BinaryTreeNode<T>* child = nullptr;
@@ -159,6 +162,18 @@ public:
     void traversal(std::function<void(BinaryTreeNode<T>*)> func) {
         if(rootNode != nullptr) rootNode->template traversal<ORDER>(func);
     }
+
+    BinaryTreeNode<T>* transplant(BinaryTreeNode<T>* original, BinaryTreeNode<T>* replacement) {
+        if(original == rootNode) rootNode = replacement;
+        else original->overwriteSelfInParent(replacement);
+        if(replacement != nullptr) replacement->overwriteParent(original->getParent());
+        return original;
+    }
+
+    void transplantAndDeleteDangling(BinaryTreeNode<T>* original, BinaryTreeNode<T>* replacement) {
+        BinaryTreeNode<T>* danglingNode = this->template transplant<T>(original, replacement);
+        if(danglingNode != nullptr) delete danglingNode;
+    }
     
     virtual ~BinaryTree() { if(rootNode != nullptr) delete rootNode; }
 };
@@ -172,12 +187,12 @@ public:
     BinarySearchTree(T val) { this->setRootNode(new BinarySearchTreeNode<T>(val)); }
 
     BinarySearchTreeNode<T>* search(T val) const {
-        return (dynamic_cast<BinarySearchTreeNode<T>*>(this->getRootNode()))->search(val);
+        return (dynamic_cast<BinarySearchTreeNode<T>*>(this->getRootNode()))->searchChildIncludingSelf(val);
     }
 
     template<BSTREE_SEARCH_MIN_MAX MINMAX>
     BinarySearchTreeNode<T>* search() const {
-        return (dynamic_cast<BinarySearchTreeNode<T>*>(this->getRootNode()))->template search<MINMAX>();
+        return (dynamic_cast<BinarySearchTreeNode<T>*>(this->getRootNode()))->template searchChildIncludingSelf<MINMAX>();
     }
 
     void insert(T val){
@@ -193,6 +208,26 @@ public:
         if(y == nullptr) this->setRootNode(z);
         else if(z->getValue() < y->getValue()) y->overwriteChild(z, LEFT_CHILD);
         else y->overwriteChild(z, RIGHT_CHILD);
+    }
+
+    void remove(BinarySearchTreeNode<T>* node){
+        if(node == nullptr) return;
+
+        auto parent = node->getParent();
+        auto lchild = node->getChild(LEFT_CHILD);
+        auto rchild = node->getChild(RIGHT_CHILD);
+        //bool isParentLeftChild =
+
+        if((lchild == nullptr) && (rchild == nullptr)){
+            if(parent != nullptr) {
+                if(parent->getChild(LEFT_CHILD) == node) parent->overwriteChild(nullptr, LEFT_CHILD);
+                if(parent->getChild(RIGHT_CHILD) == node) parent->overwriteChild(nullptr, RIGHT_CHILD);
+            }
+            delete node;
+        }else if((lchild != nullptr) && (rchild != nullptr)){
+            auto replacement = node->successor();
+
+        }
     }
 
     virtual ~BinarySearchTree() { }
