@@ -77,11 +77,11 @@ public:
         if constexpr(ORDER == POSTORDER) { if(!func(this)) return; }
     }
 
-    bool canPromoteToBinarySearchTree(){
+    bool checkBinarySearchTree(){
         bool rtn = true;
         bool isFirstValue = true;
         T lastValue;
-        traversal((std::function<bool(BinaryTreeNode<T>*)>)[isFirstValue, lastValue, rtn](auto node){
+        traversal((std::function<bool(BinaryTreeNode<T>*)>)[&isFirstValue, &lastValue, &rtn](auto node){
             if(isFirstValue) isFirstValue = false;
             else if(lastValue > node->getValue()) { rtn = false; return false; }
             lastValue = node->getValue();
@@ -188,6 +188,10 @@ public:
         BinaryTreeNode<T>* danglingNode = this->template transplant<T>(original, replacement);
         if(danglingNode != nullptr) delete danglingNode;
     }
+
+    bool checkBinarySearchTree(){
+        return rootNode->checkBinarySearchTree();
+    }
     
     virtual ~BinaryTree() { if(rootNode != nullptr) delete rootNode; }
 };
@@ -263,19 +267,23 @@ static int bst_test = push_test("Binary Search Tree", (test_function)[](){
     bst->insert(51);
     bst->insert(53);
 
-    std::cout << bst->getRootNode()->getValue() << std::endl;
+    std::cout << "Root node : " << bst->getRootNode()->getValue() << std::endl;
 
     btree_traversal_funcion<int> print_value = [](auto node){ std::cout << node->getValue() << " "; return true; };
 
-    bst->traversal<PREORDER>(print_value); std::cout << std::endl;
-    bst->traversal<INORDER>(print_value); std::cout << std::endl;
-    bst->traversal<POSTORDER>(print_value); std::cout << std::endl;
+    std::cout << "Preorder  : "; bst->traversal<PREORDER>(print_value); std::cout << std::endl;
+    std::cout << "Inorder   : "; bst->traversal<INORDER>(print_value); std::cout << std::endl;
+    std::cout << "Postorder : "; bst->traversal<POSTORDER>(print_value); std::cout << std::endl;
     
+    std::cout << "Is " << (bst->checkBinarySearchTree() ? "":"not ") << "BST." << std::endl;
+
     bst->remove(50);
 
-    bst->traversal<PREORDER>(print_value); std::cout << std::endl;
-    bst->traversal<INORDER>(print_value); std::cout << std::endl;
-    bst->traversal<POSTORDER>(print_value); std::cout << std::endl;
+    std::cout << "Preorder  : "; bst->traversal<PREORDER>(print_value); std::cout << std::endl;
+    std::cout << "Inorder   : "; bst->traversal<INORDER>(print_value); std::cout << std::endl;
+    std::cout << "Postorder : "; bst->traversal<POSTORDER>(print_value); std::cout << std::endl;
+
+    std::cout << "Is " << (bst->checkBinarySearchTree() ? "":"not ") << "BST." << std::endl;
 
     //std::cout << bst->search<BST_SEARCH_MIN>()->getValue() << std::endl;
     //std::cout << bst->search<BST_SEARCH_MAX>()->getValue() << std::endl;
