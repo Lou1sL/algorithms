@@ -30,6 +30,7 @@ enum BTREE_TRAVERSAL_ORDER_TYPE { PREORDER, INORDER, POSTORDER };
 enum BTREE_CHILD_IDENTIFIER { LEFT_CHILD = 0, RIGHT_CHILD = 1 };
 enum BTREE_PARENT_IDENTIFIER { PARENT = 2 };
 const std::size_t BTREE_LINK_SIZE = 3;
+
 template<class T>
 class BinaryTreeNode : public LinkableNode<T, BTREE_LINK_SIZE> {
 public:
@@ -50,23 +51,12 @@ public:
         this->setLink(node, PARENT);
     }
     
-    template<BTREE_TRAVERSAL_ORDER_TYPE ORDER = INORDER>
-    void traversal(std::function<void(BinaryTreeNode<T>*)> func) {
-        if constexpr(ORDER == PREORDER) func(this);
-        auto lchild = this->getChild(LEFT_CHILD);
-        if(lchild != nullptr) lchild->template traversal<ORDER>(func);
-        if constexpr(ORDER == INORDER) func(this);
-        auto rchild = this->getChild(RIGHT_CHILD);
-        if(rchild != nullptr) rchild->template traversal<ORDER>(func);
-        if constexpr(ORDER == POSTORDER) func(this);
-    }
-
     BTREE_CHILD_IDENTIFIER whichChildOfParent() {
         auto parent = this->getParent();
         if(parent == nullptr) throw "Doesn't have a parent!\n";
         if(parent->getChild(LEFT_CHILD) == this) return LEFT_CHILD;
         else if(parent->getChild(RIGHT_CHILD) == this) return RIGHT_CHILD;
-        else throw "Child-parent relationship currupt!\n";
+        else throw "Child-parent relationship corrupt!\n";
     }
 
     void overwriteSelfInParent(BinaryTreeNode<T>* node){
@@ -75,7 +65,31 @@ public:
         if(parent->getChild(LEFT_CHILD) == this) parent->overwriteChild(node, LEFT_CHILD);
         else parent->overwriteChild(node, RIGHT_CHILD);
     }
-    
+
+    template<BTREE_TRAVERSAL_ORDER_TYPE ORDER = INORDER>
+    void traversal(std::function<bool(BinaryTreeNode<T>*)> func) {
+        if constexpr(ORDER == PREORDER) { if(!func(this)) return; }
+        auto lchild = this->getChild(LEFT_CHILD);
+        if(lchild != nullptr) lchild->template traversal<ORDER>(func);
+        if constexpr(ORDER == INORDER) { if(!func(this)) return; }
+        auto rchild = this->getChild(RIGHT_CHILD);
+        if(rchild != nullptr) rchild->template traversal<ORDER>(func);
+        if constexpr(ORDER == POSTORDER) { if(!func(this)) return; }
+    }
+
+    bool canPromoteToBinarySearchTree(){
+        bool rtn = true;
+        bool isFirstValue = true;
+        T lastValue;
+        traversal((std::function<bool(BinaryTreeNode<T>*)>)[isFirstValue, lastValue, rtn](auto node){
+            if(isFirstValue) isFirstValue = false;
+            else if(lastValue > node->getValue()) { rtn = false; return false; }
+            lastValue = node->getValue();
+            return true;
+        });
+        return rtn;
+    }
+
     virtual ~BinaryTreeNode() {
         auto child = this->getLink(LEFT_CHILD);
         if(child != nullptr) delete child;
@@ -159,7 +173,7 @@ public:
     void setRootNode(BinaryTreeNode<T>* node) { if(rootNode != nullptr) delete rootNode; rootNode = node; }
 
     template<BTREE_TRAVERSAL_ORDER_TYPE ORDER = INORDER>
-    void traversal(std::function<void(BinaryTreeNode<T>*)> func) {
+    void traversal(std::function<bool(BinaryTreeNode<T>*)> func) {
         if(rootNode != nullptr) rootNode->template traversal<ORDER>(func);
     }
 
@@ -209,13 +223,15 @@ public:
         else if(z->getValue() < y->getValue()) y->overwriteChild(z, LEFT_CHILD);
         else y->overwriteChild(z, RIGHT_CHILD);
     }
-
+    void remove(T val) {
+        this->remove(this->search(val));
+    }
     void remove(BinarySearchTreeNode<T>* node){
         if(node == nullptr) return;
         
-        auto parent = node->getParent();
-        auto lchild = node->getChild(LEFT_CHILD);
-        auto rchild = node->getChild(RIGHT_CHILD);
+        auto parent = dynamic_cast<BinarySearchTreeNode<T>*>(node->getParent());
+        auto lchild = dynamic_cast<BinarySearchTreeNode<T>*>(node->getChild(LEFT_CHILD));
+        auto rchild = dynamic_cast<BinarySearchTreeNode<T>*>(node->getChild(RIGHT_CHILD));
 
         if(lchild == nullptr) this->transplant(node, rchild); 
         else if(rchild == nullptr) this->transplant(node, lchild);
@@ -236,12 +252,7 @@ public:
 };
 
 template<class T>
-using bst_traversal_funcion = std::function<void(BinaryTreeNode<T>*)>;
-
-template<class T>
-void test_traversal_print(){
-    
-}
+using btree_traversal_funcion = std::function<bool(BinaryTreeNode<T>*)>;
 
 static int bst_test = push_test("Binary Search Tree", (test_function)[](){
     BinarySearchTree<int>* bst = new BinarySearchTree<int>(50);
@@ -254,16 +265,23 @@ static int bst_test = push_test("Binary Search Tree", (test_function)[](){
 
     std::cout << bst->getRootNode()->getValue() << std::endl;
 
-    bst_traversal_funcion<int> print_value = [](auto node){ std::cout << node->getValue() << " "; };
+    btree_traversal_funcion<int> print_value = [](auto node){ std::cout << node->getValue() << " "; return true; };
+
     bst->traversal<PREORDER>(print_value); std::cout << std::endl;
     bst->traversal<INORDER>(print_value); std::cout << std::endl;
     bst->traversal<POSTORDER>(print_value); std::cout << std::endl;
     
-    std::cout << bst->search<BST_SEARCH_MIN>()->getValue() << std::endl;
-    std::cout << bst->search<BST_SEARCH_MAX>()->getValue() << std::endl;
-    std::cout << ((bst->search(52) != nullptr) ? "EXIST ":"NOT EXIST ");
-    std::cout << ((bst->search(53) != nullptr) ? "EXIST ":"NOT EXIST ");
-    std::cout << ((bst->search(54) != nullptr) ? "EXIST ":"NOT EXIST ") << std::endl;
+    bst->remove(50);
+
+    bst->traversal<PREORDER>(print_value); std::cout << std::endl;
+    bst->traversal<INORDER>(print_value); std::cout << std::endl;
+    bst->traversal<POSTORDER>(print_value); std::cout << std::endl;
+
+    //std::cout << bst->search<BST_SEARCH_MIN>()->getValue() << std::endl;
+    //std::cout << bst->search<BST_SEARCH_MAX>()->getValue() << std::endl;
+    //std::cout << ((bst->search(52) != nullptr) ? "EXIST ":"NOT EXIST ");
+    //std::cout << ((bst->search(53) != nullptr) ? "EXIST ":"NOT EXIST ");
+    //std::cout << ((bst->search(54) != nullptr) ? "EXIST ":"NOT EXIST ") << std::endl;
     
     delete bst;
 
