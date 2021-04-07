@@ -101,6 +101,24 @@ public:
 enum BSTREE_SEARCH_MIN_MAX { BST_SEARCH_MIN = 0, BST_SEARCH_MAX = 1 };
 template<class T>
 class BinarySearchTreeNode : public BinaryTreeNode<T> {
+private:
+    template<BTREE_CHILD_IDENTIFIER I, BSTREE_SEARCH_MIN_MAX MINMAX>
+    BinarySearchTreeNode<T>* successorOrPredecessor() const {
+        //Successor   : It's either the left most child node of the right child tree of current node.
+        //Predecessor : It's either the right most child node of the left child tree of current node.
+        BinarySearchTreeNode<T>* child = dynamic_cast<BinarySearchTreeNode<T>*>(this->getChild(I));
+        if(child != nullptr) return child->template searchChildIncludingSelf<MINMAX>();
+        
+        //Successor   : Or it's the first parent node which the current node is a child of it's left child tree.
+        //Predecessor : Or it's the first parent node which the current node is a child of it's right child tree.
+        BinarySearchTreeNode<T>* x = const_cast<BinarySearchTreeNode<T>*>(this);
+        BinarySearchTreeNode<T>* y = dynamic_cast<BinarySearchTreeNode<T>*>(this->getParent());
+        while((y != nullptr) && (x == dynamic_cast<BinarySearchTreeNode<T>*>(y->getChild(I)))){
+            x = y;
+            y = dynamic_cast<BinarySearchTreeNode<T>*>(y->getParent());
+        }
+        return y;
+    }
 public:
     BinarySearchTreeNode() {}
     BinarySearchTreeNode(T val) { this->setValue(val); }
@@ -128,33 +146,11 @@ public:
     }
 
     BinarySearchTreeNode<T>* successor() const {
-        //It's either the left most child node of the right child tree of current node:
-        BinarySearchTreeNode<T>* rchild = dynamic_cast<BinarySearchTreeNode<T>*>(this->getChild(RIGHT_CHILD));
-        if(rchild != nullptr) return rchild->template search<BST_SEARCH_MIN>();
-        
-        //Or it's the first parent node which the current node is a child of it's left child tree:
-        BinarySearchTreeNode<T>* x = const_cast<BinarySearchTreeNode<T>*>(this);
-        BinarySearchTreeNode<T>* y = dynamic_cast<BinarySearchTreeNode<T>*>(this->getParent());
-        while((y != nullptr) && (x == dynamic_cast<BinarySearchTreeNode<T>*>(y->getChild(RIGHT_CHILD)))){
-            x = y;
-            y = dynamic_cast<BinarySearchTreeNode<T>*>(y->getParent());
-        }
-        return y;
+        return this->successorOrPredecessor<RIGHT_CHILD, BST_SEARCH_MIN>();
     }
 
     BinarySearchTreeNode<T>* predecessor() const {
-        //It's either the right most child node of the left child tree of current node:
-        BinarySearchTreeNode<T>* lchild = dynamic_cast<BinarySearchTreeNode<T>*>(this->getChild(LEFT_CHILD));
-        if(lchild != nullptr) return lchild->template search<BST_SEARCH_MAX>();
-        
-        //Or it's the first parent node which the current node is a child of it's right child tree:
-        BinarySearchTreeNode<T>* x = const_cast<BinarySearchTreeNode<T>*>(this);
-        BinarySearchTreeNode<T>* y = dynamic_cast<BinarySearchTreeNode<T>*>(this->getParent());
-        while((y != nullptr) && (x == dynamic_cast<BinarySearchTreeNode<T>*>(y->getChild(LEFT_CHILD)))){
-            x = y;
-            y = dynamic_cast<BinarySearchTreeNode<T>*>(y->getParent());
-        }
-        return y;
+        return this->successorOrPredecessor<LEFT_CHILD, BST_SEARCH_MAX>();
     }
 
     virtual ~BinarySearchTreeNode() { }
@@ -267,7 +263,9 @@ static int bst_test = push_test("Binary Search Tree", (test_function)[](){
     bst->insert(51);
     bst->insert(53);
 
-    std::cout << "Root node : " << bst->getRootNode()->getValue() << std::endl;
+    std::cout << "Root node      : " << bst->getRootNode()->getValue() << std::endl;
+    std::cout << "Root node next : " << dynamic_cast<BinarySearchTreeNode<int>*>(bst->getRootNode())->successor()->getValue() << std::endl;
+    std::cout << "Root node prev : " << dynamic_cast<BinarySearchTreeNode<int>*>(bst->getRootNode())->predecessor()->getValue() << std::endl;
 
     btree_traversal_funcion<int> print_value = [](auto node){ std::cout << node->getValue() << " "; return true; };
 
@@ -275,7 +273,7 @@ static int bst_test = push_test("Binary Search Tree", (test_function)[](){
     std::cout << "Inorder   : "; bst->traversal<INORDER>(print_value); std::cout << std::endl;
     std::cout << "Postorder : "; bst->traversal<POSTORDER>(print_value); std::cout << std::endl;
     
-    std::cout << "Is " << (bst->checkBinarySearchTree() ? "":"not ") << "BST." << std::endl;
+    std::cout << "I\'m " << (bst->checkBinarySearchTree() ? "":"not ") << "BST." << std::endl;
 
     bst->remove(50);
 
@@ -283,7 +281,7 @@ static int bst_test = push_test("Binary Search Tree", (test_function)[](){
     std::cout << "Inorder   : "; bst->traversal<INORDER>(print_value); std::cout << std::endl;
     std::cout << "Postorder : "; bst->traversal<POSTORDER>(print_value); std::cout << std::endl;
 
-    std::cout << "Is " << (bst->checkBinarySearchTree() ? "":"not ") << "BST." << std::endl;
+    std::cout << "I\'m " << (bst->checkBinarySearchTree() ? "":"not ") << "BST." << std::endl;
 
     //std::cout << bst->search<BST_SEARCH_MIN>()->getValue() << std::endl;
     //std::cout << bst->search<BST_SEARCH_MAX>()->getValue() << std::endl;
