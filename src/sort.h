@@ -22,21 +22,47 @@ void InsertionSort(std::array<T, LEN>& arr){
 }
 
 template<class T, std::size_t LEN>
-void Merge(std::array<T, LEN>& arr, std::size_t p, std::size_t q, std::size_t r){
+void Merge(std::array<T, LEN>& arr, std::size_t l, std::size_t m, std::size_t r){
+    std::size_t lsize = m - l + 1;
+    std::size_t rsize = r - m;
+
+    T larr[lsize], rarr[rsize];
     
+    //Copy l to m to larr and m to r to rarr
+    for(std::size_t i = 0; i < lsize; i++) larr[i] = arr[l + i];
+    for(std::size_t j = 0; j < rsize; j++) rarr[j] = arr[m + j + 1];
+ 
+    std::size_t i = 0, j = 0, k = l;
+ 
+    while (i < lsize && j < rsize) {
+        if (larr[i] <= rarr[j]) { arr[k] = larr[i]; i++; }
+        else { arr[k] = rarr[j]; j++; }
+        k++;
+    }
+    while (i < lsize) { arr[k] = larr[i]; i++; k++; }
+    while (j < rsize) { arr[k] = rarr[j]; j++; k++; }
 }
 template<class T, std::size_t LEN>
-void MergeSort(std::array<T, LEN>& arr){
+void MergeSort(std::array<T, LEN>& arr, std::size_t l = 0, std::size_t r = LEN - 1){
+    if(l >= r) return;
+    std::size_t m =l+ (r-l)/2;
+    MergeSort(arr, l, m);
+    MergeSort(arr, m+1, r);
+    Merge(arr, l, m, r);
 }
 
 static int s_test = push_test("Sort", (test_function)[](){ 
     
-    auto test_in = std::array<int, 6> { 5, 4, 3, 2, 1, 0 };
-    auto expected_out = std::array<int, 6> { 0, 1, 2, 3, 4, 5 };
+    auto test_input = std::array<int, 6> { 5, 4, 3, 2, 1, 0 };
+    auto expected_output = std::array<int, 6> { 0, 1, 2, 3, 4, 5 };
 
-    InsertionSort<int, 6>(test_in);
-    bool failed = false;
-    for(int i=0; i<6; i++) if(test_in[i] != expected_out[i]) failed = true;
+    auto test_i = test_input;
+    InsertionSort<int, 6>(test_i);
+    if(test_i != expected_output) return 1;
 
-    return failed;
+    auto test_m = test_input;
+    MergeSort<int, 6>(test_m);
+    if(test_m != expected_output) return 1;
+
+    return 0;
 });
