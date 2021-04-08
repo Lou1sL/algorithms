@@ -1,5 +1,5 @@
 
 #include "binary_search_tree.h"
-#include "sort_insertion.h"
-#include "sort_merge.h"
-#include "sieve_of_eratosthenes.h"
+#include "sort.h"
+#include "prime.h"
+#include "maximum_subarray.h"
