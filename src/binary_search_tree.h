@@ -119,6 +119,13 @@ public:
         });
         return rtn;
     }
+    bool isFullTree(){
+        auto lc = this->getChild(LEFT_CHILD);
+        auto rc = this->getChild(RIGHT_CHILD);
+        if((lc == nullptr) && (rc == nullptr)) return true;
+        if((lc != nullptr) && (rc != nullptr)) return ((lc->isFullTree()) && (rc->isFullTree()));
+        return false;
+    }
     virtual BinaryTreeNode<T>* deepCopy(){
         BinaryTreeNode<T>* lchild = nullptr;
         BinaryTreeNode<T>* rchild = nullptr;
@@ -260,6 +267,10 @@ public:
     }
     bool isValidBinarySearchTree(){
         return rootNode->isValidBinarySearchTree();
+    }
+    bool isFullTree(){
+        if(this->rootNode == nullptr) return true;
+        return this->rootNode->isFullTree();
     }
 
     virtual ~BinaryTree() { if(rootNode != nullptr) delete rootNode; }
