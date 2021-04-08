@@ -1,23 +1,23 @@
 
-template<class T, int Alength>
-void insertion_sort(std::array<T, Alength>& A){
-    for(std::size_t j = 1; j < Alength; j++){
+template<class T, std::size_t LEN>
+void insertion_sort(std::array<T, LEN>& arr){
+    for(std::size_t j = 1; j < LEN; j++){
         // { 5, 4, 3, 2, 1, 0 }
         //      ↑ key = 4, as a temp
-        T key = A[j];
+        T key = arr[j];
         // { 5, 4, 3, 2, 1, 0 }
         //   ↑ Index i = 0
         int i = j - 1; //Use int because std::size_t can't be negative!
         // { 5, 4, 3, 2, 1, 0 }
         //      ← If keeps finding larger nums than the key then keep shifting right & it will overwirte key & so the left most shifted is duplicated & be like
         // { 5, 5, 3, 2, 1, 0 }
-        while((i >= 0) && (A[i] > key)){
-            A[i + 1] = A[i];
+        while((i >= 0) && (arr[i] > key)){
+            arr[i + 1] = arr[i];
             i = i - 1; //Use int because std::size_t can't be negative!
         }
         //Write temp on to the duplicated
         // { 3, 5, 4, 2, 1, 0 }
-        A[i + 1] = key;
+        arr[i + 1] = key;
     }
 }
 
