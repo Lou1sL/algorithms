@@ -1,7 +1,7 @@
 
 constexpr std::size_t GEN_MAX = 1000;
 
-//Finding primes with Sieve of Eratosthenes algorithm
+//Find primes by using Sieve of Eratosthenes algorithm
 constexpr auto PRIME_GEN() -> std::array<bool, GEN_MAX>{
     std::array<bool, GEN_MAX> rtn = { };
     rtn[0] = false; rtn[1] = false; rtn[2] = true; rtn[3] = true;
