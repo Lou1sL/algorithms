@@ -384,5 +384,5 @@ static int bst_test = push_test("Binary Search Tree", (test_function)[](){
     
     delete bst;
 
-    return 0;
+    return TEST_SUCCESS;
 });

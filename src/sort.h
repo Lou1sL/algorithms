@@ -43,12 +43,16 @@ void Merge(std::array<T, LEN>& arr, std::size_t l, std::size_t m, std::size_t r)
     while (j < rsize) { arr[k] = rarr[j]; j++; k++; }
 }
 template<class T, std::size_t LEN>
-void MergeSort(std::array<T, LEN>& arr, std::size_t l = 0, std::size_t r = LEN - 1){
+void MergeSortRecursion(std::array<T, LEN>& arr, std::size_t l, std::size_t r){
     if(l >= r) return;
     std::size_t m =l+ (r-l)/2;
-    MergeSort(arr, l, m);
-    MergeSort(arr, m+1, r);
+    MergeSortRecursion(arr, l, m);
+    MergeSortRecursion(arr, m+1, r);
     Merge(arr, l, m, r);
+}
+template<class T, std::size_t LEN>
+void MergeSort(std::array<T, LEN>& arr){
+    MergeSortRecursion(arr, 0, LEN-1);
 }
 
 static int s_test = push_test("Sort", (test_function)[](){ 
@@ -58,11 +62,11 @@ static int s_test = push_test("Sort", (test_function)[](){
 
     auto test_i = test_input;
     InsertionSort<int, 6>(test_i);
-    if(test_i != expected_output) return 1;
+    if(test_i != expected_output) return TEST_FAILED;
 
     auto test_m = test_input;
     MergeSort<int, 6>(test_m);
-    if(test_m != expected_output) return 1;
+    if(test_m != expected_output) return TEST_FAILED;
 
-    return 0;
+    return TEST_SUCCESS;
 });

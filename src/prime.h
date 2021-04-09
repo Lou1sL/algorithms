@@ -23,5 +23,5 @@ void printSmallerPrimes(int from, int to){
 
 static int soe_test = push_test("Sieve of Eratosthenes", (test_function)[](){
     printSmallerPrimes(900, 999);
-    return 0;
+    return TEST_SUCCESS;
 });

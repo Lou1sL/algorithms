@@ -9,8 +9,12 @@
 #include <string>
 #include <functional>
 
-using test_function = std::function<int(void)>;
+using TEST_RESULT = int;
+constexpr TEST_RESULT TEST_SUCCESS = 0;
+constexpr TEST_RESULT TEST_FAILED = 1;
+using test_function = std::function<TEST_RESULT(void)>;
 using test_case = std::tuple<std::string, test_function>;
+
 constexpr int MAX_TEST_CASE = 100;
 static int test_count = 0;
 static test_case nullcase = std::make_tuple("", nullptr);
