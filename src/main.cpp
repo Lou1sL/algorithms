@@ -33,7 +33,7 @@ static int push_test(const char* name, test_function func) {
 	return push_test(std::make_tuple(std::string(name), func));
 }
 
-#include "include_test.h"
+#include "include_algorithm.h"
 
 int main(){
 	std::vector<std::string> failed_case;
