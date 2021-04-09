@@ -1,4 +1,26 @@
 
+
+template<class T, std::size_t LEN>
+void BubbleSort(std::array<T, LEN>& arr){
+    bool swapped;
+    for(std::size_t i = 0; i < LEN-1; i++) {
+        swapped = false;
+        //Variable j pushes one biggest element gradually to the right during loop, hence 'bubble'.
+        //After completion, the right most element would be the largest.
+        //So there's no reason to push beyond that, hence j < LEN - i - 1
+        for(std::size_t j = 0; j < LEN-i-1; j++){
+            if(arr[j] > arr[j+1]) {
+                T temp = arr[j+1];
+                arr[j+1] = arr[j];
+                arr[j] = temp;
+                swapped = true;
+            }
+        }
+        //If there was no swapping happend at all, which means the array has been sorted, then no reason to continue.
+        if(swapped == false) break;
+   }
+}
+
 template<class T, std::size_t LEN>
 void InsertionSort(std::array<T, LEN>& arr){
     for(std::size_t j = 1; j < LEN; j++){
@@ -67,6 +89,10 @@ static int s_test = push_test("Sort", (test_function)[](){
     auto test_m = test_input;
     MergeSort<int, 6>(test_m);
     if(test_m != expected_output) return TEST_FAILED;
+
+    auto test_b = test_input;
+    BubbleSort<int, 6>(test_b);
+    if(test_b != expected_output) return TEST_FAILED;
 
     return TEST_SUCCESS;
 });
