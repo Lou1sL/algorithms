@@ -18,6 +18,7 @@ OBJCOPY = $(COMPILER_DIR)/x86_64-linux-gnu-objcopy
 
 APP_NAME     = app
 
+BUILD_DIR    = ./build
 OBJ_DIR      = ./obj
 SRC_DIR      = ./src
 INCLUDE_DIR  = ./src
@@ -33,18 +34,19 @@ LINKFLAGS = -O2 -std=c++17
 
 .PHONY: all clean
 
-all: $(APP_NAME)
+all: $(BUILD_DIR)/$(APP_NAME).elf
 
-$(APP_NAME) : $(OBJ_DIR)/main.o
-	$(LINK) $< $(LINKFLAGS) -o $(APP_NAME) -Wl,-Map,$(OBJ_DIR)/$(APP_NAME).map,--cref -lm
+$(BUILD_DIR)/$(APP_NAME).elf : $(OBJ_DIR)/main.o
+	@mkdir -p $(@D)
+	$(LINK) $< $(LINKFLAGS) -o $@ -Wl,-Map,$(OBJ_DIR)/$(APP_NAME).map,--cref -lm
 
 $(OBJ_DIR)/main.o : $(SRC_DIR)/main.cpp
+	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) -c -o $@ -I$(INCLUDE_DIR) $<
 
 GARBAGE_TYPES         = *.o *.elf *.map *.bin *.hex
-DIRECTORIES_TO_CLEAN  = $(shell find "./obj" -type d)
+DIRECTORIES_TO_CLEAN  = $(shell find "./build" "./obj" -type d)
 GARBAGE_TYPED_FOLDERS = $(foreach DIR, $(DIRECTORIES_TO_CLEAN), $(addprefix $(DIR)/,$(GARBAGE_TYPES)))
 
 clean:
 	$(RM) -rf $(GARBAGE_TYPED_FOLDERS)
-	$(RM) $(APP_NAME)
