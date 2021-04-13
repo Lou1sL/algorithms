@@ -1,4 +1,4 @@
-
+#pragma once
 
 template<class T, std::size_t LEN>
 void BubbleSort(std::array<T, LEN>& arr){

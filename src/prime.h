@@ -1,3 +1,4 @@
+#pragma once
 
 constexpr std::size_t GEN_MAX = 1000;
 

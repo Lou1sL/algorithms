@@ -8,6 +8,7 @@
 #include <tuple>
 #include <string>
 #include <functional>
+#include <limits>
 
 using TEST_RESULT = int;
 constexpr TEST_RESULT TEST_SUCCESS = 0;
