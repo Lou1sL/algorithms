@@ -121,7 +121,7 @@ void QuickSort(std::array<T, LEN>& arr){
  */
 
 
-using SORT_TEST_TYPE = int;
+using SORT_TEST_TYPE = float;
 constexpr std::size_t SORT_TEST_SIZE = 50;
 
 template<class T, std::size_t LEN>
@@ -129,7 +129,7 @@ std::vector<T> create_random_data(){
     std::random_device r;
     std::seed_seq seed { r(), r(), r(), r(), r(), r(), r(), r() };
     std::mt19937 eng(seed);
-    std::uniform_int_distribution<T> dist;
+    std::uniform_int_distribution<int> dist;
     std::vector<T> v(LEN);
     std::generate(begin(v), end(v), bind(dist, eng));
     return v;
