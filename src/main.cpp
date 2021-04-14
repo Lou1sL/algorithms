@@ -9,6 +9,10 @@
 #include <string>
 #include <functional>
 #include <limits>
+#include <cstdlib>
+#include <ctime>
+#include <random>
+#include <iterator>
 
 using TEST_RESULT = int;
 constexpr TEST_RESULT TEST_SUCCESS = 0;
