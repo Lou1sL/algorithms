@@ -156,11 +156,9 @@ void HeapSort(std::array<T, LEN>& arr){
  */
 
 
-using SORT_TEST_TYPE = int;
-constexpr std::size_t SORT_TEST_SIZE = 50;
 
 template<class T, std::size_t LEN>
-std::vector<T> create_random_data(){
+std::vector<T> genRandomArr(){
     std::random_device r;
     std::seed_seq seed { r(), r(), r(), r(), r(), r(), r(), r() };
     std::mt19937 eng(seed);
@@ -170,34 +168,38 @@ std::vector<T> create_random_data(){
     return v;
 }
 
+template <class T, std::size_t LEN>
+TEST_RESULT SortTest(std::string&& name, void (*func)(std::array<T, LEN>&), const std::array<T, LEN>& input, const std::array<T, LEN>& expected){
+    auto test_i = input;
+    auto start = std::chrono::steady_clock::now();
+    func(test_i);
+    auto end = std::chrono::steady_clock::now();
+    std::cout << name << ": " << std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count() << " ns";
+    if(test_i != expected) {
+        std::cout << " failed!" << std::endl;
+        return TEST_FAILED;
+    }
+    std::cout << " success!" << std::endl;
+    return TEST_SUCCESS;
+}
+
+using SORT_TEST_TYPE = int;
+constexpr std::size_t SORT_TEST_SIZE = 50000;
+
 static int s_test = push_test("Sort", (test_function)[](){ 
     
-    auto rand_data = create_random_data<SORT_TEST_TYPE, SORT_TEST_SIZE>();
+    auto rand_data = genRandomArr<SORT_TEST_TYPE, SORT_TEST_SIZE>();
     auto test_input = std::array<SORT_TEST_TYPE, SORT_TEST_SIZE> { 0 };
     std::copy(rand_data.begin(), rand_data.end(), test_input.begin());
 
     auto expected_output = test_input;
     std::sort(expected_output.begin(), expected_output.end());
 
-    auto test_i = test_input;
-    InsertionSort<SORT_TEST_TYPE, SORT_TEST_SIZE>(test_i);
-    if(test_i != expected_output) return TEST_FAILED;
-
-    auto test_m = test_input;
-    MergeSort<SORT_TEST_TYPE, SORT_TEST_SIZE>(test_m);
-    if(test_m != expected_output) return TEST_FAILED;
-
-    auto test_b = test_input;
-    BubbleSort<SORT_TEST_TYPE, SORT_TEST_SIZE>(test_b);
-    if(test_b != expected_output) return TEST_FAILED;
-
-    auto test_q = test_input;
-    QuickSort<SORT_TEST_TYPE, SORT_TEST_SIZE>(test_q);
-    if(test_q != expected_output) return TEST_FAILED;
-
-    auto test_h = test_input;
-    HeapSort<SORT_TEST_TYPE, SORT_TEST_SIZE>(test_h);
-    if(test_h != expected_output) return TEST_FAILED;
-
+    SortTest<SORT_TEST_TYPE, SORT_TEST_SIZE>("C++ Sort", [](std::array<SORT_TEST_TYPE, SORT_TEST_SIZE>& arr){ std::sort(arr.begin(), arr.end()); }, test_input, expected_output);
+    SortTest<SORT_TEST_TYPE, SORT_TEST_SIZE>("Insertion Sort", &InsertionSort<SORT_TEST_TYPE, SORT_TEST_SIZE>, test_input, expected_output);
+    SortTest<SORT_TEST_TYPE, SORT_TEST_SIZE>("Merge Sort", &MergeSort<SORT_TEST_TYPE, SORT_TEST_SIZE>, test_input, expected_output);
+    SortTest<SORT_TEST_TYPE, SORT_TEST_SIZE>("Bubble Sort", &BubbleSort<SORT_TEST_TYPE, SORT_TEST_SIZE>, test_input, expected_output);
+    SortTest<SORT_TEST_TYPE, SORT_TEST_SIZE>("Quick Sort", &QuickSort<SORT_TEST_TYPE, SORT_TEST_SIZE>, test_input, expected_output);
+    SortTest<SORT_TEST_TYPE, SORT_TEST_SIZE>("Heap Sort", &HeapSort<SORT_TEST_TYPE, SORT_TEST_SIZE>, test_input, expected_output);
     return TEST_SUCCESS;
 });

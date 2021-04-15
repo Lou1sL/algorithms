@@ -13,6 +13,7 @@
 #include <ctime>
 #include <random>
 #include <iterator>
+#include <chrono>
 
 using TEST_RESULT = int;
 constexpr TEST_RESULT TEST_SUCCESS = 0;
