@@ -116,12 +116,47 @@ void QuickSort(std::array<T, LEN>& arr){
     QuickSortRecursion<T, LEN>(arr, 0, LEN - 1);
 }
 
+inline std::size_t HeapParent     (std::size_t i) { return i >> 1;   }
+inline std::size_t HeapLeftChild  (std::size_t i) { return i << 1;   }
+inline std::size_t HeapRightChild (std::size_t i) { return ((i << 1) | 1); }
+template<class T, std::size_t LEN>
+void MaxHeapify(std::array<T, LEN>& arr, std::size_t i, std::size_t heap_size){
+    std::size_t l = HeapLeftChild(i);
+    std::size_t r = HeapRightChild(i);
+
+    std::size_t largest;
+    if((l < heap_size) && (arr[l] > arr[i])) largest = l;
+    else largest = i;
+    if((r < heap_size) && (arr[r] > arr[largest])) largest = r;
+    if(largest != i){
+        Exchange(arr[i], arr[largest]);
+        MaxHeapify<T, LEN>(arr, largest, heap_size);
+    }
+}
+template<class T, std::size_t LEN>
+void BuildMaxHeap(std::array<T, LEN>& arr){
+    for(std::size_t i = LEN/2; i>=0; i--) {
+        MaxHeapify<T, LEN>(arr, i, LEN);
+        if(i==0) break;
+    }
+}
+template<class T, std::size_t LEN>
+void HeapSort(std::array<T, LEN>& arr){
+    BuildMaxHeap<T, LEN>(arr);
+    std::size_t heapSize = LEN;
+    for(std::size_t i = LEN - 1; i>=1; i--) {
+        heapSize--;
+        Exchange(arr[0], arr[i]);
+        MaxHeapify<T, LEN>(arr, 0, heapSize);
+    }
+}
+
 /**
  * Non-comparison Based Sorting
  */
 
 
-using SORT_TEST_TYPE = float;
+using SORT_TEST_TYPE = int;
 constexpr std::size_t SORT_TEST_SIZE = 50;
 
 template<class T, std::size_t LEN>
@@ -159,6 +194,10 @@ static int s_test = push_test("Sort", (test_function)[](){
     auto test_q = test_input;
     QuickSort<SORT_TEST_TYPE, SORT_TEST_SIZE>(test_q);
     if(test_q != expected_output) return TEST_FAILED;
+
+    auto test_h = test_input;
+    HeapSort<SORT_TEST_TYPE, SORT_TEST_SIZE>(test_h);
+    if(test_h != expected_output) return TEST_FAILED;
 
     return TEST_SUCCESS;
 });
