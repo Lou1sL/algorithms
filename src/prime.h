@@ -1,6 +1,6 @@
 #pragma once
 
-constexpr std::size_t GEN_MAX = 1000;
+constexpr std::size_t GEN_MAX = 100;
 
 //Find primes by using Sieve of Eratosthenes algorithm
 constexpr auto PRIME_GEN() -> std::array<bool, GEN_MAX>{
@@ -23,6 +23,6 @@ void printSmallerPrimes(int from, int to){
 }
 
 static int soe_test = push_test("Sieve of Eratosthenes", (test_function)[](){
-    printSmallerPrimes(900, 999);
+    printSmallerPrimes(50, 80);
     return TEST_SUCCESS;
 });

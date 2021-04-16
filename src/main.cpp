@@ -14,6 +14,7 @@
 #include <random>
 #include <iterator>
 #include <chrono>
+#include <type_traits>
 
 using TEST_RESULT = int;
 constexpr TEST_RESULT TEST_SUCCESS = 0;

@@ -40,7 +40,6 @@ public:
             node.link[i] = nullptr; //There's no reason to do so since the destuctor doesn't delete any linked nodes.
             //It's only for the sake of good practice.
         }
-        
     }
 
     //For linkable node, there is no reason to delete before replacement since there's no way to tell whether if it is useless or not.

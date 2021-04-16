@@ -4,10 +4,31 @@
 template<class T>
 inline void Exchange(T& a, T& b){ T temp = a; a = b; b = temp; }
 
-/**
- * Comparison Based Sorting
- */
+// ┌──────────────────────────────────────┐
+// │ Selection Sort                       │
+// ├────────────┬────────────┬────────────┤
+// │ Best       │ Average    │ Worst      │
+// ├────────────┼────────────┼────────────┤
+// │ θ(n^2)     | θ(n^2)     | O(n^2)     |
+// └────────────┴────────────┴────────────┘
+// Comparison Based
+template<class T, std::size_t LEN>
+void SelectionSort(std::array<T, LEN>& arr){
+    if constexpr(LEN <= 1) return;
+    for(std::size_t i=0; i<LEN-1; i++)
+        for(std::size_t j=i; j<LEN; j++)
+            if(arr[i] > arr[j])
+                Exchange(arr[i], arr[j]);
+}
 
+// ┌──────────────────────────────────────┐
+// │ Bubble Sort                          │
+// ├────────────┬────────────┬────────────┤
+// │ Best       │ Average    │ Worst      │
+// ├────────────┼────────────┼────────────┤
+// │ Ω(n)       | θ(n^2)     | O(n^2)     |
+// └────────────┴────────────┴────────────┘
+// Comparison Based
 template<class T, std::size_t LEN>
 void BubbleSort(std::array<T, LEN>& arr){
     if constexpr(LEN <= 1) return;
@@ -28,6 +49,14 @@ void BubbleSort(std::array<T, LEN>& arr){
    }
 }
 
+// ┌──────────────────────────────────────┐
+// │ Insertion Sort                       │
+// ├────────────┬────────────┬────────────┤
+// │ Best       │ Average    │ Worst      │
+// ├────────────┼────────────┼────────────┤
+// │ Ω(n)       | θ(n^2)     | O(n^2)     |
+// └────────────┴────────────┴────────────┘
+// Comparison Based
 template<class T, std::size_t LEN>
 void InsertionSort(std::array<T, LEN>& arr){
     if constexpr(LEN <= 1) return;
@@ -51,6 +80,14 @@ void InsertionSort(std::array<T, LEN>& arr){
     }
 }
 
+// ┌──────────────────────────────────────┐
+// │ Merge Sort                           │
+// ├────────────┬────────────┬────────────┤
+// │ Best       │ Average    │ Worst      │
+// ├────────────┼────────────┼────────────┤
+// │ Ω(nlog(n)) | θ(nlog(n)) | O(nlog(n)) |
+// └────────────┴────────────┴────────────┘
+// Comparison Based
 template<class T, std::size_t LEN>
 void Merge(std::array<T, LEN>& arr, std::size_t l, std::size_t m, std::size_t r){
     std::size_t lSize = m - l + 1;
@@ -88,6 +125,14 @@ void MergeSort(std::array<T, LEN>& arr){
     MergeSortRecursion<T, LEN>(arr, 0, LEN-1);
 }
 
+// ┌──────────────────────────────────────┐
+// │ Quick Sort                           │
+// ├────────────┬────────────┬────────────┤
+// │ Best       │ Average    │ Worst      │
+// ├────────────┼────────────┼────────────┤
+// │ Ω(nlog(n)) | θ(nlog(n)) | O(n^2)     |
+// └────────────┴────────────┴────────────┘
+// Comparison Based
 template<class T, std::size_t LEN>
 int Partition(std::array<T, LEN>& arr, int l, int r){
     T pivot = arr[r];
@@ -116,6 +161,14 @@ void QuickSort(std::array<T, LEN>& arr){
     QuickSortRecursion<T, LEN>(arr, 0, LEN - 1);
 }
 
+// ┌──────────────────────────────────────┐
+// │ Heap Sort                            │
+// ├────────────┬────────────┬────────────┤
+// │ Best       │ Average    │ Worst      │
+// ├────────────┼────────────┼────────────┤
+// │ Ω(nlog(n)) | θ(nlog(n)) | O(nlog(n)) |
+// └────────────┴────────────┴────────────┘
+// Comparison Based
 inline std::size_t HeapParent     (std::size_t i) { return i >> 1;   }
 inline std::size_t HeapLeftChild  (std::size_t i) { return i << 1;   }
 inline std::size_t HeapRightChild (std::size_t i) { return ((i << 1) | 1); }
@@ -142,6 +195,7 @@ void BuildMaxHeap(std::array<T, LEN>& arr){
 }
 template<class T, std::size_t LEN>
 void HeapSort(std::array<T, LEN>& arr){
+    if constexpr(LEN <= 1) return;
     BuildMaxHeap<T, LEN>(arr);
     std::size_t heapSize = LEN;
     for(std::size_t i = LEN - 1; i>=1; i--) {
@@ -151,11 +205,44 @@ void HeapSort(std::array<T, LEN>& arr){
     }
 }
 
-/**
- * Non-comparison Based Sorting
- */
+// ┌──────────────────────────────────────┐
+// │ Bucket Sort                          │
+// ├────────────┬────────────┬────────────┤
+// │ Best       │ Average    │ Worst      │
+// ├────────────┼────────────┼────────────┤
+// │ Ω(n+k)     | θ(n+k)     | O(n^2)     |
+// └────────────┴────────────┴────────────┘
+// Non-comparison Based
+constexpr std::size_t BUCKET_SIZE = 10;
+template<class T, std::size_t LEN>
+void BucketSort(std::array<T, LEN>& arr){
+    if constexpr(LEN <= 1) return;
+    static_assert(std::is_integral<T>::value, "Integral array required for BucketSort!");
+    std::vector<T> bucket[BUCKET_SIZE];
+    T bucketDivider = std::numeric_limits<T>::max() / BUCKET_SIZE;
+    for(std::size_t i=0; i<LEN; i++)
+        if(arr[i] > 0) bucket[arr[i] / bucketDivider].push_back(arr[i]);
+        else bucket[0].push_back(arr[i]);
+    for(std::size_t i=0; i<BUCKET_SIZE; i++)
+        std::sort(bucket[i].begin(), bucket[i].end());
+    std::size_t index = 0;
+    for(std::size_t i=0; i<BUCKET_SIZE; i++)
+        for(std::size_t j=0; j<bucket[i].size(); j++)
+            arr[index++] = bucket[i][j];
+}
 
-
+// ┌──────────────────────────────────────┐
+// │ Radix Sort                           │
+// ├────────────┬────────────┬────────────┤
+// │ Best       │ Average    │ Worst      │
+// ├────────────┼────────────┼────────────┤
+// │ Ω(nk)      | θ(nk)      | O(nk)      |
+// └────────────┴────────────┴────────────┘
+// Non-comparison Based
+template<class T, std::size_t LEN>
+void RadixSort(std::array<T, LEN>& arr){
+    
+}
 
 template<class T, std::size_t LEN>
 std::vector<T> genRandomArr(){
@@ -169,22 +256,23 @@ std::vector<T> genRandomArr(){
 }
 
 template <class T, std::size_t LEN>
-TEST_RESULT SortTest(std::string&& name, void (*func)(std::array<T, LEN>&), const std::array<T, LEN>& input, const std::array<T, LEN>& expected){
+TEST_RESULT SortTest(std::string&& name, void (*func)(std::array<T, LEN>&), const std::array<T, LEN>& input, const std::array<T, LEN>& expected, bool print = false){
     auto test_i = input;
     auto start = std::chrono::steady_clock::now();
     func(test_i);
     auto end = std::chrono::steady_clock::now();
-    std::cout << name << ": " << std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count() << " ns";
+    std::cout << name << ": " << std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count() << " ns. ";
+    if(print) for(auto ele : test_i) std::cout << "->" << ele;
     if(test_i != expected) {
-        std::cout << " failed!" << std::endl;
+        std::cout << " Failed!" << std::endl;
         return TEST_FAILED;
     }
-    std::cout << " success!" << std::endl;
+    std::cout << " Success!" << std::endl;
     return TEST_SUCCESS;
 }
 
 using SORT_TEST_TYPE = int;
-constexpr std::size_t SORT_TEST_SIZE = 50000;
+constexpr std::size_t SORT_TEST_SIZE = 5;
 
 static int s_test = push_test("Sort", (test_function)[](){ 
     
@@ -196,10 +284,12 @@ static int s_test = push_test("Sort", (test_function)[](){
     std::sort(expected_output.begin(), expected_output.end());
 
     SortTest<SORT_TEST_TYPE, SORT_TEST_SIZE>("C++ Sort", [](std::array<SORT_TEST_TYPE, SORT_TEST_SIZE>& arr){ std::sort(arr.begin(), arr.end()); }, test_input, expected_output);
+    SortTest<SORT_TEST_TYPE, SORT_TEST_SIZE>("Selection Sort", &SelectionSort<SORT_TEST_TYPE, SORT_TEST_SIZE>, test_input, expected_output);
     SortTest<SORT_TEST_TYPE, SORT_TEST_SIZE>("Insertion Sort", &InsertionSort<SORT_TEST_TYPE, SORT_TEST_SIZE>, test_input, expected_output);
     SortTest<SORT_TEST_TYPE, SORT_TEST_SIZE>("Merge Sort", &MergeSort<SORT_TEST_TYPE, SORT_TEST_SIZE>, test_input, expected_output);
     SortTest<SORT_TEST_TYPE, SORT_TEST_SIZE>("Bubble Sort", &BubbleSort<SORT_TEST_TYPE, SORT_TEST_SIZE>, test_input, expected_output);
     SortTest<SORT_TEST_TYPE, SORT_TEST_SIZE>("Quick Sort", &QuickSort<SORT_TEST_TYPE, SORT_TEST_SIZE>, test_input, expected_output);
     SortTest<SORT_TEST_TYPE, SORT_TEST_SIZE>("Heap Sort", &HeapSort<SORT_TEST_TYPE, SORT_TEST_SIZE>, test_input, expected_output);
+    SortTest<SORT_TEST_TYPE, SORT_TEST_SIZE>("Bucket Sort", &BucketSort<SORT_TEST_TYPE, SORT_TEST_SIZE>, test_input, expected_output);
     return TEST_SUCCESS;
 });
