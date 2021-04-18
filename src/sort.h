@@ -247,13 +247,15 @@ void CountSort(std::array<T, LEN>& arr, std::size_t shift){
     //Total amount for 0s and 1s of every element's shift position.
     std::size_t count[2] = { 0, 0 };
     for(std::size_t i=0; i<LEN; i++) count[GetBit<T>(arr[i], shift)]++;
+    //If there's no 0 or no 1 at current position then there's no reason to sort for this position.
+    if((count[1] == 0) || ((count[0] == 0))) return;
     //Since we need an incremental result so the first position of 1 starts right after the last 0.
     //And because here is a total amount, which can be treated as the last index + 1, so all we need to do is plus the bigger 1 with the smaller 0.
     //Then we get the count[0] as the last index + 1 of 0, and the count[1] as the last index + 1 of 1.
     count[1] += count[0];
     for(std::size_t i=LEN-1; i>=0; i--) {
         //The positon of element i would be the i's shift position value's last index.
-        //However, this is only sorted for the shift position, the previously sorted shift position should keep it's order when current shift postion value is the same.
+        //However, this is only sorted for the shift position, the previously sorted shift position should keep it's order when current shift position value is the same.
         output[--count[GetBit<T>(arr[i], shift)]] = arr[i];
         if(i==0)break;
     }
