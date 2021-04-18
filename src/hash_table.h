@@ -23,9 +23,7 @@ private:
 
 public:
     HashTable() { }
-    //Copy constructor
     HashTable(const HashTable<EleType, SIZE>& table) { }
-    //Move constructor
     HashTable(HashTable<EleType, SIZE>&& table) { }
 };
 

@@ -21,3 +21,15 @@ Make and execute (Linux):
 Remote gdb debug:
 
 ./debug.sh
+
+
+
+TODO:
+
+HashTable
+
+AVL Tree
+
+Red Black Tree
+
+Graph
