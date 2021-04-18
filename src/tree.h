@@ -136,7 +136,7 @@ public:
 
     virtual AVLTree<T>* getRootNode() const { return dynamic_cast<AVLTree<T>*>(this->rootNode); }
     
-
+    virtual ~AVLTree() { }
 };
 
 
