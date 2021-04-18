@@ -49,3 +49,9 @@ public:
 
     virtual ~LinkableNode() {}
 };
+
+template<class T>
+using SingleLinkNode = LinkableNode<T, 1>;
+
+template<class T>
+using DoubleLinkNode = LinkableNode<T, 2>;

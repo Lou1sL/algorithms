@@ -4,3 +4,4 @@
 #include "prime.h"
 #include "subarray.h"
 #include "graph.h"
+#include "hash_table.h"

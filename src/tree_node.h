@@ -211,4 +211,11 @@ public:
             static_cast<int>(this->getChild(RIGHT_CHILD)->getHeight())
             );
     }
+    AVLTreeNode<T>* rightRotate() {
+        auto x = this->getChild(LEFT_CHILD);
+        auto t2 = x->getChild(RIGHT_CHILD);
+        x->overwriteChild(this, RIGHT_CHILD);
+        this->overwriteChild(t2, LEFT_CHILD);
+        //this->height = 
+    }
 };
