@@ -239,9 +239,33 @@ void BucketSort(std::array<T, LEN>& arr){
 // │ Ω(nk)      | θ(nk)      | O(nk)      |
 // └────────────┴────────────┴────────────┘
 // Non-comparison Based
+template<class T>
+inline std::uint8_t GetBit(const T& val, std::size_t shift) { return (val >> shift) & 0b1; }
+template<class T, std::size_t LEN>
+void CountSort(std::array<T, LEN>& arr, std::size_t shift){
+    T output[LEN];
+    //Total amount for 0s and 1s of every element's shift position.
+    std::size_t count[2] = { 0, 0 };
+    for(std::size_t i=0; i<LEN; i++) count[GetBit<T>(arr[i], shift)]++;
+    //Since we need an incremental result so the first position of 1 starts right after the last 0.
+    //And because here is a total amount, which can be treated as the last index + 1, so all we need to do is plus the bigger 1 with the smaller 0.
+    //Then we get the count[0] as the last index + 1 of 0, and the count[1] as the last index + 1 of 1.
+    count[1] += count[0];
+    for(std::size_t i=LEN-1; i>=0; i--) {
+        //The positon of element i would be the i's shift position value's last index.
+        //However, this is only sorted for the shift position, the previously sorted shift position should keep it's order when current shift postion value is the same.
+        output[--count[GetBit<T>(arr[i], shift)]] = arr[i];
+        if(i==0)break;
+    }
+    for(std::size_t i=0; i<LEN; i++) arr[i] = output[i];
+}
 template<class T, std::size_t LEN>
 void RadixSort(std::array<T, LEN>& arr){
-    
+    if constexpr(LEN <= 1) return;
+    static_assert(std::is_integral<T>::value, "Integral array required for RadixSort!");
+    static_assert(!std::is_signed<T>::value, "Unsigned integral array required for RadixSort!");
+    constexpr int DIGIT_SIZE = std::numeric_limits<T>::digits;
+    for(std::size_t shift=0; shift<DIGIT_SIZE; shift++) CountSort(arr, shift);
 }
 
 template<class T, std::size_t LEN>
@@ -271,8 +295,8 @@ TEST_RESULT SortTest(std::string&& name, void (*func)(std::array<T, LEN>&), cons
     return TEST_SUCCESS;
 }
 
-using SORT_TEST_TYPE = int;
-constexpr std::size_t SORT_TEST_SIZE = 5;
+using SORT_TEST_TYPE = unsigned int;
+constexpr std::size_t SORT_TEST_SIZE = 500;
 
 static int s_test = push_test("Sort", (test_function)[](){ 
     
@@ -291,5 +315,6 @@ static int s_test = push_test("Sort", (test_function)[](){
     SortTest<SORT_TEST_TYPE, SORT_TEST_SIZE>("Quick Sort", &QuickSort<SORT_TEST_TYPE, SORT_TEST_SIZE>, test_input, expected_output);
     SortTest<SORT_TEST_TYPE, SORT_TEST_SIZE>("Heap Sort", &HeapSort<SORT_TEST_TYPE, SORT_TEST_SIZE>, test_input, expected_output);
     SortTest<SORT_TEST_TYPE, SORT_TEST_SIZE>("Bucket Sort", &BucketSort<SORT_TEST_TYPE, SORT_TEST_SIZE>, test_input, expected_output);
+    SortTest<SORT_TEST_TYPE, SORT_TEST_SIZE>("Radix Sort", &RadixSort<SORT_TEST_TYPE, SORT_TEST_SIZE>, test_input, expected_output);
     return TEST_SUCCESS;
 });
