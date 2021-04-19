@@ -16,7 +16,7 @@ constexpr std::size_t DOUBLE_LINK_NEXT = 1;
 #define SET_NEXT(...) setLink(__VA_ARGS__ __VA_OPT__(,) DOUBLE_LINK_NEXT)
 
 template<class T>
-using iterate_function = std::function<bool(const T*)>;
+using iterate_function = std::function<bool(T*)>;
 
 template<class T>
 class DoubleLinkedList {
