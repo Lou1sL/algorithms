@@ -11,6 +11,7 @@ public:
     Node(Node<T>&& node) { this->value = node.value; }
 
     T getValue() const { return value; }
+    T* getValueRef() { return &value; }
     void setValue(T val) { value = val; }
 
     virtual ~Node() {}
