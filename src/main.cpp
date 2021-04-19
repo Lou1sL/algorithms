@@ -15,6 +15,8 @@
 #include <iterator>
 #include <chrono>
 #include <type_traits>
+// #define NDEBUG
+#include <cassert>
 
 using TEST_RESULT = int;
 constexpr TEST_RESULT TEST_SUCCESS = 0;
