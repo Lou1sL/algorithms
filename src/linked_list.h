@@ -62,6 +62,7 @@ public:
             if(nextNode->getValue() == val) {
                 nextNode->GET_PREV()->SET_NEXT(nextNode->GET_NEXT());
                 nextNode->GET_NEXT()->SET_PREV(nextNode->GET_PREV());
+                this->counter--;
                 break;
             }
             nextNode = nextNode->GET_NEXT();
@@ -103,12 +104,12 @@ static int ll_test = push_test("Linked List", (test_function)[](){
     dl->insert(1);
 
     dl->iterate((iterate_function<int>)[](auto val){ std::cout << *val << " "; return true; });
-    std::cout << std::endl;
+    std::cout << std::endl << dl->size() << std::endl;
     
     dl->remove(3);
 
     dl->iterate((iterate_function<int>)[](auto val){ std::cout << *val << " "; return true; });
-    std::cout << std::endl;
+    std::cout << std::endl << dl->size() << std::endl;
 
     delete dl;
 
