@@ -10,15 +10,15 @@ template<> struct HashCalc<int> {
 };
 
 template<class KeyT, class ValT>
-class HashTableElementContent {
+class KVPair {
 public:
     KeyT key;
     ValT val;
-    HashTableElementContent(const KeyT& k, const ValT& v) : key(k), val(v) {}
+    KVPair(const KeyT& k, const ValT& v) : key(k), val(v) {}
 };
 
 template<class KeyT, class ValT>
-using HashTableElement = DoubleLinkedList<HashTableElementContent<KeyT, ValT>>;
+using HashTableElement = DoubleLinkedList<KVPair<KeyT, ValT>>;
 
 template<class KeyT, class ValT, std::size_t TABLE_SIZE, class HASH_CALCULATOR = HashCalc<KeyT>>
 class HashTable {
@@ -47,7 +47,7 @@ public:
             return true;
         });
         if(isUpdateValue) return;
-        HashTableElementContent<KeyT, ValT> ele(key, val);
+        KVPair<KeyT, ValT> ele(key, val);
         table[sizedHash(key)]->insert(ele);
     }
     bool containsKey(const KeyT& key){
