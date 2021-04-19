@@ -26,8 +26,6 @@ Remote gdb debug:
 
 TODO:
 
-HashTable
-
 AVL Tree
 
 Red Black Tree
