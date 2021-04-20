@@ -1,3 +1,4 @@
 FROM gcc:10.2
-RUN apt update
-RUN apt install gdbserver
+RUN apt upgrade -y
+RUN apt update -y
+RUN apt install gdbserver -y
