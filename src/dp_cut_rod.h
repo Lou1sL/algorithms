@@ -98,8 +98,8 @@ Price<2> BottomUpCutRod(const std::array<Price<2>, LEN>& arr, std::size_t rod_le
 
 static int dpcr_test = push_test("DP Cut Rod", (test_function)[](){
     std::array<Price<2>, 10> price_array = { 1, 5, 8, 9, 10, 17, 17, 20, 24, 30 };
-    std::cout << CutRod<10>(price_array, 5) << std::endl;
-    std::cout << MemoizedCutRod<10>(price_array, 5) << std::endl;
-    std::cout << BottomUpCutRod<10>(price_array, 5) << std::endl;
+    std::cout << CutRod(price_array, 5) << std::endl;
+    std::cout << MemoizedCutRod(price_array, 5) << std::endl;
+    std::cout << BottomUpCutRod(price_array, 5) << std::endl;
     return TEST_SUCCESS;
 });

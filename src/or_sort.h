@@ -309,7 +309,7 @@ static int s_test = push_test("Sort", (test_function)[](){
     auto expected_output = test_input;
     std::sort(expected_output.begin(), expected_output.end());
 
-    SortTest<SORT_TEST_TYPE, SORT_TEST_SIZE>("C++ Sort", [](std::array<SORT_TEST_TYPE, SORT_TEST_SIZE>& arr){ std::sort(arr.begin(), arr.end()); }, test_input, expected_output);
+    SortTest<SORT_TEST_TYPE, SORT_TEST_SIZE>("C++ Sort", [](auto& arr){ std::sort(arr.begin(), arr.end()); }, test_input, expected_output);
     SortTest<SORT_TEST_TYPE, SORT_TEST_SIZE>("Selection Sort", &SelectionSort<SORT_TEST_TYPE, SORT_TEST_SIZE>, test_input, expected_output);
     SortTest<SORT_TEST_TYPE, SORT_TEST_SIZE>("Insertion Sort", &InsertionSort<SORT_TEST_TYPE, SORT_TEST_SIZE>, test_input, expected_output);
     SortTest<SORT_TEST_TYPE, SORT_TEST_SIZE>("Merge Sort", &MergeSort<SORT_TEST_TYPE, SORT_TEST_SIZE>, test_input, expected_output);

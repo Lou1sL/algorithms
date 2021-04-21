@@ -14,3 +14,4 @@
 //Dynamic programming
 #include "dp_prime.h"
 #include "dp_cut_rod.h"
+#include "dp_lcs.h"
