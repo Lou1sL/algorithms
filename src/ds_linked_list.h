@@ -1,6 +1,6 @@
 #pragma once
 
-#include "node.h"
+#include "ds_node.h"
 
 template<class T>
 using SingleLinkNode = LinkableNode<T, 1>;

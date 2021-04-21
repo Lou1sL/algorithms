@@ -1,6 +1,6 @@
 #pragma once
 
-#include "node.h"
+#include "ds_node.h"
 
 class Graph {
 

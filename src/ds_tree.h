@@ -1,6 +1,6 @@
 #pragma once
 
-#include "tree_node.h"
+#include "ds_tree_node.h"
 
 template<class T>
 class BinaryTree {

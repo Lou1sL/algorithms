@@ -1,6 +1,6 @@
 #pragma once
 
-#include "linked_list.h"
+#include "ds_linked_list.h"
 
 template<class T> struct HashCalc { };
 template<> struct HashCalc<int> {
