@@ -5,7 +5,7 @@ using Matrix = std::array<std::array<T, YLENGTH>, XLENGTH>;
 
 //Largest common subsequence
 template<class T, std::size_t XLEN, std::size_t YLEN>
-auto LCSLengthMatrix(const std::array<T, XLEN>& x, const std::array<T, YLEN>& y) -> Matrix<std::size_t, XLEN+1, YLEN+1> {
+auto LCSMatrix(const std::array<T, XLEN>& x, const std::array<T, YLEN>& y) -> Matrix<std::size_t, XLEN+1, YLEN+1> {
     Matrix<std::size_t, XLEN+1, YLEN+1> mat;
     if((XLEN == 0) || (YLEN == 0)) return mat;
     for(std::size_t i=0; i<=XLEN; i++) mat[i] = { 0 };
@@ -19,8 +19,8 @@ auto LCSLengthMatrix(const std::array<T, XLEN>& x, const std::array<T, YLEN>& y)
     return mat;
 }
 
-template<class T, class DescT, std::size_t XLEN, std::size_t YLEN>
-void LCSPrintMatrix(const Matrix<T, XLEN, YLEN>& mat, const std::array<DescT, XLEN-1>& xdesc, const std::array<DescT, YLEN-1>& ydesc){
+template<class MatT, class ArrT, std::size_t XLEN, std::size_t YLEN>
+void LCSMatrixPrint(const Matrix<MatT, XLEN, YLEN>& mat, const std::array<ArrT, XLEN-1>& xdesc, const std::array<ArrT, YLEN-1>& ydesc){
     if((XLEN == 0) || (YLEN == 0)) return;
     for(std::size_t i=0; i<XLEN; i++){
         for(std::size_t j=0; j<YLEN; j++){
@@ -33,13 +33,25 @@ void LCSPrintMatrix(const Matrix<T, XLEN, YLEN>& mat, const std::array<DescT, XL
     }
 }
 
-template<class T, std::size_t XLEN, std::size_t YLEN>
-void LCSFindLongest(const Matrix<T, XLEN, YLEN>& mat, const std::array<DescT, XLEN-1>& x, const std::array<DescT, YLEN-1>& y){
-    if((XLEN == 0) || (YLEN == 0)) return;
-    for(std::size_t i=0; i<XLEN; i++){
-        for(std::size_t j=0; j<YLEN; j++){
-        }
+template<class MatT, class ArrT, std::size_t XLEN, std::size_t YLEN>
+auto LCSFind(
+    const Matrix<MatT, XLEN, YLEN>& mat,
+    const std::array<ArrT, XLEN-1>& x,
+    const std::array<ArrT, YLEN-1>& y) -> std::deque<ArrT> {
+    std::deque<ArrT> rtn;
+    if((XLEN == 0) || (YLEN == 0)) return rtn;
+
+    std::size_t i = XLEN, j = YLEN;
+    while(true){
+        if((i==0) || (j==0)) break;
+        MatT c = mat[i][j], l = mat[i-1][j], u = mat[i][j-1], lu = mat[i-1][j-1];
+        ArrT xval = x[i-1], yval = y[j-1];
+        if(xval == yval) { rtn.push_front(xval); i--; j--; }
+        else if(l > u) { i--; }
+        else if(l < u) { j--; }
+        else { i--;/** Or j--, whatever, because when l == u it means there are multiple LCS. */ }
     }
+    return rtn;
 }
 
 static int dplcs_test = push_test("DP LCS", (test_function)[](){
@@ -47,8 +59,11 @@ static int dplcs_test = push_test("DP LCS", (test_function)[](){
     auto x = std::array<char, 7> { 'A', 'B', 'C', 'B', 'D', 'A', 'B' };
     auto y = std::array<char, 6> { 'B', 'D', 'C', 'A', 'B', 'A' };
 
-    auto resMat = LCSLengthMatrix(x, y);
-    PrintMatrix(resMat, x, y);
+    auto resMat = LCSMatrix(x, y);
+    LCSMatrixPrint(resMat, x, y);
+    auto lcs = LCSFind(resMat, x, y);
+    for (auto i = lcs.begin(); i != lcs.end(); ++i) std::cout << *i << ' ';
+    std::cout << std::endl;
 
     return TEST_SUCCESS;
 });
