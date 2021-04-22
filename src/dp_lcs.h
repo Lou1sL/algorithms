@@ -9,11 +9,14 @@ auto LCSMatrix(const std::array<T, XLEN>& x, const std::array<T, YLEN>& y) -> Ma
     Matrix<std::size_t, XLEN+1, YLEN+1> mat;
     if((XLEN == 0) || (YLEN == 0)) return mat;
     for(std::size_t i=0; i<=XLEN; i++) mat[i] = { 0 };
+
     for(std::size_t i=1; i<=XLEN; i++){
         for(std::size_t j=1; j<=YLEN; j++){
-            if(x[i-1] == y[j-1]) mat[i][j] = mat[i-1][j-1] + 1;
-            else if(mat[i-1][j] >= mat[i][j-1]) mat[i][j] = mat[i-1][j];
-            else mat[i][j] = mat[i][j-1];
+            std::size_t& c = mat[i][j], l = mat[i-1][j], u = mat[i][j-1], lu = mat[i-1][j-1];
+            const T& xval = x[i-1], yval = y[j-1];
+            if(xval == yval) c = lu + 1;
+            else if(l >= u) c = l;
+            else c = u;
         }
     }
     return mat;
