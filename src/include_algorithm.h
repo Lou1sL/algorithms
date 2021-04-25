@@ -15,3 +15,6 @@
 #include "dp_prime.h"
 #include "dp_cut_rod.h"
 #include "dp_lcs.h"
+
+//Greedy algorithm
+#include "gr_huffman.h"
