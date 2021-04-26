@@ -1,5 +1,7 @@
 #pragma once
 
+namespace dp_lcs {
+
 template<class T, std::size_t XLENGTH, std::size_t YLENGTH>
 using Matrix = std::array<std::array<T, YLENGTH>, XLENGTH>;
 
@@ -70,3 +72,5 @@ static int dplcs_test = push_test("DP LCS", (test_function)[](){
 
     return TEST_SUCCESS;
 });
+
+}

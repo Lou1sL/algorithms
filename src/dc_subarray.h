@@ -1,5 +1,7 @@
 #pragma once
 
+namespace dc_subarray {
+
 template<class T, std::size_t LEN>
 auto FindMaxCrossingSubarray(const std::array<T,LEN>& arr, std::size_t low, std::size_t mid, std::size_t high) -> std::tuple<std::size_t, std::size_t, T> {
 
@@ -59,3 +61,5 @@ static int mcs_test = push_test("Max Subarray", (test_function)[](){
     if(result == expected_output) return TEST_SUCCESS;
     return TEST_FAILED;
 });
+
+}

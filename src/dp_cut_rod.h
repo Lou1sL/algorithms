@@ -1,5 +1,7 @@
 #pragma once
 
+namespace dp_cut_rod {
+
 template<class T>
 inline T Max(const T& a, const T& b){ return a > b ? a : b;  }
 
@@ -103,3 +105,5 @@ static int dpcr_test = push_test("DP Cut Rod", (test_function)[](){
     std::cout << BottomUpCutRod(price_array, 5) << std::endl;
     return TEST_SUCCESS;
 });
+
+}

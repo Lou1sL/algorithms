@@ -2,6 +2,10 @@
 
 #include "ds_tree.h"
 
+namespace gr_huffman {
+
+using namespace ds_tree;
+
 using Freq = float;
 
 template<class ValT>
@@ -109,3 +113,5 @@ static int grh_test = push_test("Huffman", (test_function)[](){
     delete tree;
     return TEST_SUCCESS;
 });
+
+}

@@ -1,5 +1,7 @@
 #pragma once
 
+namespace or_sort {
+
 //Arguments are lvalue references so Copy-assignment is triggered.
 template<class T>
 inline void Exchange(T& a, T& b){ T temp = a; a = b; b = temp; }
@@ -320,3 +322,5 @@ static int s_test = push_test("Sort", (test_function)[](){
     SortTest<SORT_TEST_TYPE, SORT_TEST_SIZE>("Radix Sort", &RadixSort<SORT_TEST_TYPE, SORT_TEST_SIZE>, test_input, expected_output);
     return TEST_SUCCESS;
 });
+
+}
