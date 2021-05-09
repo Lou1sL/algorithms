@@ -1,6 +1,10 @@
 #pragma once
 
-#include "tree_node.h"
+#include "ds_tree_node.h"
+
+namespace ds_tree {
+
+using namespace ds_tree_node;
 
 template<class T>
 class BinaryTree {
@@ -183,3 +187,5 @@ static int bst_test = push_test("BTree & BST", (test_function)[](){
 
     return TEST_SUCCESS;
 });
+
+}

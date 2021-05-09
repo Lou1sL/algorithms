@@ -1,5 +1,7 @@
 #pragma once
 
+namespace dp_prime {
+
 constexpr std::size_t GEN_MAX = 100;
 
 //Find primes by using Sieve of Eratosthenes algorithm
@@ -26,3 +28,5 @@ static int soe_test = push_test("Sieve of Eratosthenes", (test_function)[](){
     printSmallerPrimes(50, 80);
     return TEST_SUCCESS;
 });
+
+}

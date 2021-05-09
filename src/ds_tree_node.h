@@ -1,6 +1,10 @@
 #pragma once
 
-#include "node.h"
+#include "ds_node.h"
+
+namespace ds_tree_node {
+
+using namespace ds_node;
 
 enum BTREE_TRAVERSAL_ORDER_TYPE { PREORDER, INORDER, POSTORDER };
 enum BTREE_CHILD_IDENTIFIER { LEFT_CHILD = 0, RIGHT_CHILD = 1 };
@@ -219,3 +223,5 @@ public:
         //this->height = 
     }
 };
+
+}

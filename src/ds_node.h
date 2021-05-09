@@ -1,5 +1,7 @@
 #pragma once
 
+namespace ds_node {
+
 template<class T>
 class Node {
 protected:
@@ -50,3 +52,5 @@ public:
 
     virtual ~LinkableNode() {}
 };
+
+}

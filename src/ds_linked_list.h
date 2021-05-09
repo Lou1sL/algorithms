@@ -1,6 +1,10 @@
 #pragma once
 
-#include "node.h"
+#include "ds_node.h"
+
+namespace ds_linked_list {
+
+using namespace ds_node;
 
 template<class T>
 using SingleLinkNode = LinkableNode<T, 1>;
@@ -115,3 +119,5 @@ static int ll_test = push_test("Linked List", (test_function)[](){
 
     return TEST_SUCCESS;
 });
+
+}

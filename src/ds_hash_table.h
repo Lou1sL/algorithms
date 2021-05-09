@@ -1,6 +1,10 @@
 #pragma once
 
-#include "linked_list.h"
+#include "ds_linked_list.h"
+
+namespace ds_hash_table {
+
+using namespace ds_linked_list;
 
 template<class T> struct HashCalc { };
 template<> struct HashCalc<int> {
@@ -73,3 +77,5 @@ static int ht_test = push_test("Hash Table", (test_function)[](){
 
     return TEST_SUCCESS;
 });
+
+}
